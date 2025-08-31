@@ -1,0 +1,929 @@
+<div id="PlaceLauncherStatusPanel" style="display:none;width:300px" data-new-plugin-events-enabled="True" data-event-stream-for-plugin-enabled="True" data-event-stream-for-protocol-enabled="True" data-is-game-launch-interface-enabled="True" data-is-protocol-handler-launch-enabled="True" data-is-user-logged-in="False" data-os-name="Windows" data-protocol-name-for-client="rkitty-player" data-protocol-name-for-studio="rkitty-studio" data-protocol-url-includes-launchtime="true" data-protocol-detection-enabled="true" data-protocol-version="1">
+    <div class="modalPopup blueAndWhite PlaceLauncherModal" style="min-height: 160px">
+        <div id="Spinner" class="Spinner" style="padding:20px 0;">
+            <img data-delaysrc="https://images.rbxcdn.com/e998fb4c03e8c2e30792f2f3436e9416.gif" height="32" width="32" alt="Progress"/>
+        </div>
+        <div id="status" style="min-height:40px;text-align:center;margin:5px 20px">
+            <div id="Starting" class="PlaceLauncherStatus MadStatusStarting" style="display:block">
+                Starting rkitty...
+            </div>
+            <div id="Waiting" class="PlaceLauncherStatus MadStatusField">Connecting to Players...</div>
+            <div id="StatusBackBuffer" class="PlaceLauncherStatus PlaceLauncherStatusBackBuffer MadStatusBackBuffer"></div>
+        </div>
+        <div style="text-align:center;margin-top:1em">
+            <input type="button" class="Button CancelPlaceLauncherButton translate" value="Cancel"/>
+        </div>
+    </div>
+</div>
+
+<div id="ProtocolHandlerStartingDialog" style="display:none;" class="protocol-handler-container">
+    <div class="modalPopup ph-modal-popup">
+        <div class="ph-modal-header">
+        </div>
+        <div class="ph-logo-row">
+            <img data-delaysrc="https://images.rbxcdn.com/6304dfebadecbb3b338a79a6a528936c.svg.gzip" width="90" height="90" alt="R" class="play-logo-image"/>
+            <img data-delaysrc="https://images.rbxcdn.com/3da410727fa2670dcb4f31316643138a.svg.gzip" width="90" height="90" alt="R" class="studio-logo-image hidden"/>
+        </div>
+        <div class="ph-areyouinstalleddialog-content">
+            <p class="larger-font-size">
+                rkitty is now loading. Get ready to play!
+            </p>
+            <div class="ph-startingdialog-spinner-row">
+                <img data-delaysrc="https://images.rbxcdn.com/4bed93c91f909002b1f17f05c0ce13d1.gif" width="82" height="24"/>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ProtocolHandlerAreYouInstalled" style="display:none;" class="protocol-handler-container">
+    <div class="modalPopup ph-modal-popup">
+        <div class="ph-modal-header">
+            <span class="icon-close simplemodal-close"></span>
+        </div>
+        <div class="ph-logo-row">
+            <img data-delaysrc="https://images.rbxcdn.com/6304dfebadecbb3b338a79a6a528936c.svg.gzip" width="90" height="90" alt="R" class="play-logo-image"/>
+            <img data-delaysrc="https://images.rbxcdn.com/3da410727fa2670dcb4f31316643138a.svg.gzip" width="90" height="90" alt="R" class="studio-logo-image hidden"/>
+        </div>
+        <div class="ph-areyouinstalleddialog-content">
+            <p class="larger-font-size">
+                You're moments away from getting into the game!
+            </p>
+            <div>
+                <button type="button" class="btn btn-primary-md" id="ProtocolHandlerInstallButton" data-updated-modal>
+                    Download and Install rkitty
+                </button>
+            </div>
+            <div class="small">
+                <a href="https://en.help.retro.kitty.to/hc/en-us/articles/204473560" class="text-name" target="_blank">Click here for help</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ProtocolHandlerClickAlwaysAllowed" class="ph-clickalwaysallowed" style="display:none;">
+    <p class="larger-font-size">
+        <span class="icon-moreinfo"></span>
+        Check <b>Always open links for URL: rkitty Protocol</b> and click
+        <b>Open URL: rkitty Protocol</b>
+        in the dialog box above to join games faster in the future!
+    </p>
+</div>
+
+<div id="videoPrerollPanel" style="display:none">
+    <div id="videoPrerollTitleDiv">
+        Gameplay sponsored by:
+    </div>
+    <div id="content">
+        <video id="contentElement" style="width:0; height:0;"/>
+    </div>
+    <div id="videoPrerollMainDiv"></div>
+    <div id="videoPrerollCompanionAd">
+    </div>
+    <div id="videoPrerollLoadingDiv">
+        Loading <span id="videoPrerollLoadingPercent">0%</span> - <span id="videoPrerollMadStatus" class="MadStatusField">Starting game...</span><span id="videoPrerollMadStatusBackBuffer" class="MadStatusBackBuffer"></span>
+        <div id="videoPrerollLoadingBar">
+            <div id="videoPrerollLoadingBarCompleted">
+            </div>
+        </div>
+    </div>
+    <div id="videoPrerollJoinBC">
+        <span>Get more with Builders Club!</span>
+        <a href="https://retro.kitty.to/premium/membership?ctx=preroll" target="_blank" class="btn-medium btn-primary" id="videoPrerollJoinBCButton">Join Builders Club</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var videoPreRollDFP = rkitty.VideoPreRollDFP;
+        if (videoPreRollDFP) {
+            var customTargeting = rkitty.VideoPreRollDFP.customTargeting;
+            videoPreRollDFP.showVideoPreRoll = false;
+            videoPreRollDFP.loadingBarMaxTime = 33000;
+            videoPreRollDFP.videoLoadingTimeout = 11000;
+            videoPreRollDFP.videoPlayingTimeout = 41000;
+            videoPreRollDFP.videoLogNote = "Guest";
+            videoPreRollDFP.logsEnabled = true;
+            videoPreRollDFP.excludedPlaceIds = "32373412";
+            videoPreRollDFP.adUnit = "/1015347/VideoPrerollUnder13";
+            videoPreRollDFP.adTime = 15;
+            videoPreRollDFP.isSwfPreloaderEnabled = false;
+            videoPreRollDFP.isPrerollShownEveryXMinutesEnabled = true;
+            videoPreRollDFP.isAgeTargetingEnabled = true;
+            videoPreRollDFP.isAgeOrSegmentTargetingEnabled = true;
+            videoPreRollDFP.isCompanionAdRenderedByGoogleTag = true;
+            customTargeting.userAge = "Unknown";
+            customTargeting.userAgeOrSegment = "Unknown";
+            customTargeting.userGender = "Unknown";
+            customTargeting.gameGenres = "";
+            customTargeting.environment = "Production";
+            customTargeting.adTime = "15";
+            customTargeting.PLVU = false;
+            $(videoPreRollDFP.checkEligibility);
+        }
+    });
+</script>
+
+<div id="GuestModePrompt_BoyGirl" class="Revised GuestModePromptModal" style="display:none;">
+    <div class="simplemodal-close">
+        <a class="ImageButton closeBtnCircle_20h" style="cursor: pointer; margin-left:455px;top:7px; position:absolute;"></a>
+    </div>
+    <div class="Title">
+        Choose Your Avatar
+    </div>
+    <div style="min-height: 275px; background-color: white;">
+        <div style="clear:both; height:25px;"></div>
+        <div style="text-align: center;">
+            <div class="VisitButtonsGuestCharacter VisitButtonBoyGuest" style="float:left; margin-left:45px;"></div>
+            <div class="VisitButtonsGuestCharacter VisitButtonGirlGuest" style="float:right; margin-right:45px;"></div>
+        </div>
+        <div style="clear:both; height:25px;"></div>
+        <div class="RevisedFooter">
+            <div style="width:200px;margin:10px auto 0 auto;">
+                <a href="https://retro.kitty.to/?returnUrl=https%3A%2F%2Fwww.retro.kitty.to%2FNewLogin"><div class="RevisedCharacterSelectSignup"></div></a>
+                <a class="HaveAccount" href="https://retro.kitty.to/newlogin?returnUrl=https%3A%2F%2Fwww.retro.kitty.to%2FNewLogin">I have an account</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function checkrkittyInstall() {
+        return rkittyLaunch.CheckrkittyInstall('https://retro.kitty.to/install/download.aspx');
+    }
+</script>
+
+<div id="InstallationInstructions" class="" style="display:none;">
+    <div class="ph-installinstructions">
+        <div class="ph-modal-header">
+            <span class="icon-close simplemodal-close"></span>
+            <h3 class="title">Thanks for playing rkitty</h3>
+        </div>
+        <div class="modal-content-container"> 
+            <div class="ph-installinstructions-body ">
+                <ul class="modal-col-4">
+                    <li class="step1-of-4">
+                        <h2>1</h2>
+                        <p class="larger-font-size">Click <strong>rkittyPlayer.exe</strong> to run the rkitty installer, which just downloaded via your web browser.</p>
+                        <img data-delaysrc="https://images.rbxcdn.com/236c40e74d06db9a43dddb9f02dd6eee.png"/>
+                    </li>
+                    <li class="step2-of-4">
+                        <h2>2</h2>
+                        <p class="larger-font-size">Click <strong>Run</strong> when prompted by your computer to begin the installation process.</p>
+                        <img data-delaysrc="https://images.rbxcdn.com/4a3f96d30df0f7879abde4ed837446c6.png"/>
+                    </li>
+                    <li class="step3-of-4">
+                        <h2>3</h2>
+                        <p class="larger-font-size">Click <strong>Ok</strong> once you've successfully installed rkitty.</p>
+                        <img data-delaysrc="https://images.rbxcdn.com/25bca1222274f7f21fb86f6bdda806c9.png"/>
+                    </li>
+                    <li class="step4-of-4">
+                        <h2>4</h2>
+                        <p class="larger-font-size">After installation, click <strong>Play</strong> below to join the action!</p>
+                        <div class="VisitButton VisitButtonContinueGLI">
+                            <a class="btn btn-primary-lg disabled btn-full-width">Play</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="xsmall">
+            The rkitty installer should download shortly. If it doesn't, start the <a href="#" class="text-link" onclick="rkitty.ProtocolHandlerClientInterface.startDownload(); return false;">download now.</a>
+        </div>
+    </div>
+</div>
+<div class="InstallInstructionsImage" data-modalwidth="970" style="display:none;"></div>
+
+<div id="pluginObjDiv" style="height:1px;width:1px;visibility:hidden;position: absolute;top: 0;"></div>
+<iframe id="downloadInstallerIFrame" name="downloadInstallerIFrame" style="visibility:hidden;height:0;width:1px;position:absolute"></iframe>
+
+<script type="text/javascript" src="https://js.rbxcdn.com/e2cb6070c58f829226a04307a3f3e28a.js.gzip"></script>
+
+<script type="text/javascript">
+    rkitty.Client._skip = null;
+    rkitty.Client._CLSID = '76D50904-6780-4c8b-8986-1A7EE0B1716D';
+    rkitty.Client._installHost = 'setup.retro.kitty.to';
+    rkitty.Client.ImplementsProxy = true;
+    rkitty.Client._silentModeEnabled = true;
+    rkitty.Client._bringAppToFrontEnabled = false;
+    rkitty.Client._currentPluginVersion = '';
+    rkitty.Client._eventStreamLoggingEnabled = true;
+
+    rkitty.Client._installSuccess = function() {
+        if(GoogleAnalyticsEvents){
+            GoogleAnalyticsEvents.ViewVirtual('InstallSuccess');
+            GoogleAnalyticsEvents.FireEvent(['Plugin','Install Success']);
+            if (rkitty.Client._eventStreamLoggingEnabled && typeof rkitty.GamePlayEvents != "undefined") {
+                rkitty.GamePlayEvents.SendInstallSuccess(rkitty.Client._launchMode, play_placeId);
+            }
+        }
+    }
+            
+    if ((window.chrome || window.safari) && window.location.hash == '#chromeInstall') {
+        window.location.hash = '';
+        var continuation = '(' + $.cookie('chromeInstall') + ')';
+        play_placeId = $.cookie('chromeInstallPlaceId');
+        rkitty.GamePlayEvents.lastContext = $.cookie('chromeInstallLaunchMode');
+        $.cookie('chromeInstallPlaceId', null);
+        $.cookie('chromeInstallLaunchMode', null);
+        $.cookie('chromeInstall', null);
+        rkittyLaunch._GoogleAnalyticsCallback = function() { var isInsiderkittyIDE = 'website'; if (rkitty && rkitty.Client && rkitty.Client.isIDE && rkitty.Client.isIDE()) { isInsiderkittyIDE = 'Studio'; };GoogleAnalyticsEvents.FireEvent(['Plugin Location', 'Launch Attempt', isInsiderkittyIDE]);GoogleAnalyticsEvents.FireEvent(['Plugin', 'Launch Attempt', 'Play']);EventTracker.fireEvent('GameLaunchAttempt_Win32', 'GameLaunchAttempt_Win32_Plugin'); if (typeof rkitty.GamePlayEvents != 'undefined') { rkitty.GamePlayEvents.SendClientStartAttempt(null, play_placeId); }  }; 
+        rkitty.Client.ResumeTimer(eval(continuation));
+    }
+</script>
+
+<div class="ConfirmationModal modalPopup unifiedModal smallModal" data-modal-handle="confirmation" style="display:none;">
+    <a class="genericmodal-close ImageButton closeBtnCircle_20h"></a>
+    <div class="Title"></div>
+    <div class="GenericModalBody">
+        <div class="TopBody">
+            <div class="ImageContainer rkitty-item-image" data-image-size="small" data-no-overlays data-no-click>
+                <img class="GenericModalImage" alt="generic image"/>
+            </div>
+            <div class="Message"></div>
+        </div>
+        <div class="ConfirmationModalButtonContainer GenericModalButtonContainer">
+            <a href id="rkitty-confirm-btn"><span></span></a>
+            <a href id="rkitty-decline-btn"><span></span></a>
+        </div>
+        <div class="ConfirmationModalFooter">
+        </div>  
+    </div>  
+    <script type="text/javascript">
+        rkitty = rkitty || {};
+        rkitty.Resources = rkitty.Resources || {};
+        
+        rkitty.Resources.GenericConfirmation = {
+            yes: "Yes",
+            No: "No",
+            Confirm: "Confirm",
+            Cancel: "Cancel"
+        };
+    </script>
+</div>
+
+<script type="text/javascript">function urchinTracker() {}</script>
+
+<script type="text/javascript">
+    $(function () {
+        rkitty.CookieUpgrader.domain = 'retro.kitty.to';
+        rkitty.CookieUpgrader.upgrade("GuestData", { expires: rkitty.CookieUpgrader.thirtyYearsFromNow });
+        rkitty.CookieUpgrader.upgrade("RBXSource", { expires: function (cookie) { return rkitty.CookieUpgrader.getExpirationFromCookieValue("rbx_acquisition_time", cookie); } });
+        rkitty.CookieUpgrader.upgrade("RBXViralAcquisition", { expires: function (cookie) { return rkitty.CookieUpgrader.getExpirationFromCookieValue("time", cookie); } });
+        rkitty.CookieUpgrader.upgrade("RBXMarketing", { expires: rkitty.CookieUpgrader.thirtyYearsFromNow });
+        rkitty.CookieUpgrader.upgrade("RBXSessionTracker", { expires: rkitty.CookieUpgrader.fourHoursFromNow });
+        rkitty.CookieUpgrader.upgrade("RBXEventTrackerV2", {expires: rkitty.CookieUpgrader.thirtyYearsFromNow});
+    });
+</script>
+
+<script>
+    var _comscore = _comscore || [];
+    _comscore.push({ c1: "2", c2: "6035605", c3: "", c4: "", c15: "" });
+
+    (function() {
+        var s = document.createElement("script"), el = document.getElementsByTagName("script")[0];
+        s.async = true;
+        s.src = (document.location.protocol == "https:" ? "https://sb" : "http://b") + ".scorecardresearch.com/beacon.js";
+        el.parentNode.insertBefore(s, el);
+    })();
+</script>
+<noscript>
+    <img src="http://b.scorecardresearch.com/p?c1=2&c2=&c3=&c4=&c5=&c6=&c15=&cv=2.0&cj=1"/>
+</noscript>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+<title>retro.kitty.to</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,requiresActiveX=true"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="rkitty Corporation"/>
+<meta name="description" content="rkitty is the world's largest social platform for play. We help power the imaginations of people around the world."/>
+<meta name="keywords" content="free games, online games, building games, virtual worlds, free mmo, gaming cloud, physics engine"/>
+<meta name="apple-itunes-app" content="app-id=431946152"/>
+<meta name="google-site-verification" content="KjufnQUaDv5nXJogvDMey4G-Kb7ceUVxTdzcMaP9pCY"/>
+
+<script type="application/ld+json">
+    {
+    "@context" : "http://schema.org",
+    "@type" : "Organization",
+    "name" : "rkitty",
+    "url" : "https://retro.kitty.to/",
+    "logo": "https://images.rbxcdn.com/1870e85fa867567576343eaf76fb841e.png",
+    "sameAs" : [
+    "https://facebook.com/rkitty/",
+    "https://twitter.com/rkitty",
+    "https://linkedin.com/company/147977",
+    "https://instagram.com/rkitty/",
+    "https://youtube.com/user/rkitty",
+    "https://plus.google.com/+rkitty",
+    "https://twitch.tv/rkitty"
+    ]
+    }
+</script>
+
+<link rel="canonical" href="https://retro.kitty.to/NewLogin"/>
+<link href="favicon.ico" rel="icon"/>
+
+<link rel="stylesheet" href="MainCSS.css"/>
+<link rel="stylesheet" href="https://static.rbxcdn.com/css/page___0a178e25a42a2f76a512014793bbb2ee_m.css/fetch"/>
+
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">window.jQuery || document.write("<script type='text/javascript' src='/js/jquery/jquery-1.11.1.js'><\/script>")</script>
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jquery.migrate/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript">window.jQuery || document.write("<script type='text/javascript' src='/js/jquery/jquery-migrate-1.2.1.js'><\/script>")</script>
+<script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/4.0/1/MicrosoftAjax.js"></script>
+<script type="text/javascript">window.Sys || document.write("<script type='text/javascript' src='/js/Microsoft/MicrosoftAjax.js'><\/script>")</script>
+
+<script type="text/javascript" src="https://cdns.gigya.com/js/gigya.js?apiKey=3_OsvmtBbTg6S_EUbwTPtbbmoihFY5ON6v6hbVrTbuqpBs7SyF_LQaJwtwKJ60sY1p">
+    {
+        bypassCookiePolicy: 'never'
+    }
+</script>
+
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+
+    window.GoogleAnalyticsDisablerkitty2 = true;
+    _gaq.push(['b._setAccount', 'UA-486632-1']);
+    _gaq.push(['b._setCampSourceKey', 'rbx_source']);
+    _gaq.push(['b._setCampMediumKey', 'rbx_medium']);
+    _gaq.push(['b._setCampContentKey', 'rbx_campaign']);
+    _gaq.push(['b._setDomainName', 'retro.kitty.to']);
+    _gaq.push(['b._setCustomVar', 1, 'Visitor', 'Anonymous', 2]);
+    _gaq.push(['b._setPageGroup', 1, 'NewLogin']);
+    _gaq.push(['b._trackPageview']);
+
+    _gaq.push(['c._setAccount', 'UA-26810151-2']);
+    _gaq.push(['c._setDomainName', 'retro.kitty.to']);
+    _gaq.push(['c._setPageGroup', 1, 'NewLogin']);
+
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+<script type="text/javascript" src="https://js.rbxcdn.com/612f2be9ab5cd9090c6a4dbfb32a8a0c.js.gzip"></script>
+
+<script type="text/javascript">
+    if (rkitty && rkitty.EventStream) {
+        rkitty.EventStream.Init("//ecsv2.retro.kitty.to/www/e.png",
+            "//ecsv2.retro.kitty.to/www/e.png",
+            "//ecsv2.retro.kitty.to/pe?t=studio",
+            "//ecsv2.retro.kitty.to/pe?t=diagnostic");
+    }
+</script>
+
+<script type="text/javascript">
+    if (rkitty && rkitty.PageHeartbeatEvent) {
+        rkitty.PageHeartbeatEvent.Init([2,8,20,60]);
+    }
+</script>
+
+<script type="text/javascript" src="https://js.rbxcdn.com/c1db44ee099833082056de7b8d604e77.js.gzip"></script>
+
+<script type="text/javascript">
+    rkitty.config.externalResources = [];
+    rkitty.config.paths['Pages.Catalog'] = 'https://js.rbxcdn.com/f27ab562314284f6db31a6b309af5085.js.gzip';
+    rkitty.config.paths['Pages.CatalogShared'] = 'https://js.rbxcdn.com/5c0ac85bd60f40a577bfff7e323e3690.js.gzip';
+    rkitty.config.paths['Widgets.AvatarImage'] = 'https://js.rbxcdn.com/823c7d686e6b3d8321275740fe498f9d.js.gzip';
+    rkitty.config.paths['Widgets.DropdownMenu'] = 'https://js.rbxcdn.com/5cf0eb71249768c86649bbf0c98591b0.js.gzip';
+    rkitty.config.paths['Widgets.GroupImage'] = 'https://js.rbxcdn.com/556af22c86bce192fb12defcd4d2121c.js.gzip';
+    rkitty.config.paths['Widgets.HierarchicalDropdown'] = 'https://js.rbxcdn.com/7689b2fd3f7467640cda2d19e5968409.js.gzip';
+    rkitty.config.paths['Widgets.ItemImage'] = 'https://js.rbxcdn.com/c2aa2fcc2b1e8ec82e1bacfdb9dfffea.js.gzip';
+    rkitty.config.paths['Widgets.PlaceImage'] = 'https://js.rbxcdn.com/52ff803e77bb661839e8b2c93bb5ba27.js.gzip';
+    rkitty.config.paths['Widgets.SurveyModal'] = 'https://js.rbxcdn.com/56ad7af86ee4f8bc82af94269ed50148.js.gzip';
+</script>
+
+<script type="text/javascript" src="https://js.rbxcdn.com/6f09fe787bb106e3d6d49e889bf45925.js.gzip"></script>
+
+<script type="text/javascript">
+    $(function () {
+        rkitty.JSErrorTracker.initialize({ 'suppressConsoleError': true});
+    });
+</script>
+
+<script type="text/javascript">
+    var rkitty = rkitty || {};
+    rkitty.UpsellAdModal = rkitty.UpsellAdModal || {};
+
+    rkitty.UpsellAdModal.Resources = {
+        title: "Remove Ads Like This",
+        body: "Builders Club members do not see external ads like these.",
+        accept: "Upgrade Now",
+        decline: "No, thanks"
+    };
+</script>
+
+<script type="text/javascript">
+    rkitty.XsrfToken.setToken('gslYcZN595Ch');
+</script>
+
+<script type="text/javascript">
+    rkitty.FixedUI.gutterAdsEnabled = false;
+</script>
+
+<script type="text/javascript">
+    var rkitty = rkitty || {};
+    rkitty.jsConsoleEnabled = false;
+</script>
+
+<script>
+    $(function () {
+        rkitty.DeveloperConsoleWarning.showWarning();
+    });
+</script>
+
+<script type="text/javascript">
+    if (typeof(rkitty) === "undefined") { rkitty = {}; }
+    rkitty.Endpoints = rkitty.Endpoints || {};
+    rkitty.Endpoints.Urls = rkitty.Endpoints.Urls || {};
+    rkitty.Endpoints.Urls['/api/item.ashx'] = 'https://retro.kitty.to/api/item.ashx';
+    rkitty.Endpoints.Urls['/asset/'] = 'https://assetgame.retro.kitty.to/asset/';
+    rkitty.Endpoints.Urls['/client-status/set'] = 'https://retro.kitty.to/client-status/set';
+    rkitty.Endpoints.Urls['/client-status'] = 'https://retro.kitty.to/client-status';
+    rkitty.Endpoints.Urls['/game/'] = 'https://assetgame.retro.kitty.to/game/';
+    rkitty.Endpoints.Urls['/game-auth/getauthticket'] = 'https://retro.kitty.to/game-auth/getauthticket';
+    rkitty.Endpoints.Urls['/game/edit.ashx'] = 'https://assetgame.retro.kitty.to/game/edit.ashx';
+    rkitty.Endpoints.Urls['/game/getauthticket'] = 'https://assetgame.retro.kitty.to/game/getauthticket';
+    rkitty.Endpoints.Urls['/game/get-hash'] = 'https://assetgame.retro.kitty.to/game/get-hash';
+    rkitty.Endpoints.Urls['/game/placelauncher.ashx'] = 'https://assetgame.retro.kitty.to/game/placelauncher.ashx';
+    rkitty.Endpoints.Urls['/game/preloader'] = 'https://assetgame.retro.kitty.to/game/preloader';
+    rkitty.Endpoints.Urls['/game/report-stats'] = 'https://assetgame.retro.kitty.to/game/report-stats';
+    rkitty.Endpoints.Urls['/game/report-event'] = 'https://assetgame.retro.kitty.to/game/report-event';
+    rkitty.Endpoints.Urls['/game/updateprerollcount'] = 'https://assetgame.retro.kitty.to/game/updateprerollcount';
+    rkitty.Endpoints.Urls['/login/default.aspx'] = 'https://retro.kitty.to/login/default.aspx';
+    rkitty.Endpoints.Urls['/my/character.aspx'] = 'https://retro.kitty.to/my/character.aspx';
+    rkitty.Endpoints.Urls['/my/money.aspx'] = 'https://retro.kitty.to/my/money.aspx';
+    rkitty.Endpoints.Urls['/navigation/userdata'] = 'https://retro.kitty.to/navigation/userdata';
+    rkitty.Endpoints.Urls['/chat/chat'] = 'https://retro.kitty.to/chat/chat';
+    rkitty.Endpoints.Urls['/chat/data'] = 'https://retro.kitty.to/chat/data';
+    rkitty.Endpoints.Urls['/presence/users'] = 'https://retro.kitty.to/presence/users';
+    rkitty.Endpoints.Urls['/presence/user'] = 'https://retro.kitty.to/presence/user';
+    rkitty.Endpoints.Urls['/friends/list'] = 'https://retro.kitty.to/friends/list';
+    rkitty.Endpoints.Urls['/navigation/getcount'] = 'https://retro.kitty.to/navigation/getCount';
+    rkitty.Endpoints.Urls['/catalog/browse.aspx'] = 'https://retro.kitty.to/catalog/browse.aspx';
+    rkitty.Endpoints.Urls['/catalog/html'] = 'https://search.retro.kitty.to/catalog/html';
+    rkitty.Endpoints.Urls['/catalog/json'] = 'https://search.retro.kitty.to/catalog/json';
+    rkitty.Endpoints.Urls['/catalog/contents'] = 'https://search.retro.kitty.to/catalog/contents';
+    rkitty.Endpoints.Urls['/catalog/lists.aspx'] = 'https://search.retro.kitty.to/catalog/lists.aspx';
+    rkitty.Endpoints.Urls['/catalog/items'] = 'https://search.retro.kitty.to/catalog/items';
+    rkitty.Endpoints.Urls['/asset-hash-thumbnail/image'] = 'https://assetgame.retro.kitty.to/asset-hash-thumbnail/image';
+    rkitty.Endpoints.Urls['/asset-hash-thumbnail/json'] = 'https://assetgame.retro.kitty.to/asset-hash-thumbnail/json';
+    rkitty.Endpoints.Urls['/asset-thumbnail-3d/json'] = 'https://assetgame.retro.kitty.to/asset-thumbnail-3d/json';
+    rkitty.Endpoints.Urls['/asset-thumbnail/image'] = 'https://assetgame.retro.kitty.to/asset-thumbnail/image';
+    rkitty.Endpoints.Urls['/asset-thumbnail/json'] = 'https://assetgame.retro.kitty.to/asset-thumbnail/json';
+    rkitty.Endpoints.Urls['/asset-thumbnail/url'] = 'https://assetgame.retro.kitty.to/asset-thumbnail/url';
+    rkitty.Endpoints.Urls['/asset/request-thumbnail-fix'] = 'https://assetgame.retro.kitty.to/asset/request-thumbnail-fix';
+    rkitty.Endpoints.Urls['/avatar-thumbnail-3d/json'] = 'https://retro.kitty.to/avatar-thumbnail-3d/json';
+    rkitty.Endpoints.Urls['/avatar-thumbnail/image'] = 'https://retro.kitty.to/avatar-thumbnail/image';
+    rkitty.Endpoints.Urls['/avatar-thumbnail/json'] = 'https://retro.kitty.to/avatar-thumbnail/json';
+    rkitty.Endpoints.Urls['/avatar-thumbnails'] = 'https://retro.kitty.to/avatar-thumbnails';
+    rkitty.Endpoints.Urls['/avatar/request-thumbnail-fix'] = 'https://retro.kitty.to/avatar/request-thumbnail-fix';
+    rkitty.Endpoints.Urls['/bust-thumbnail/json'] = 'https://retro.kitty.to/bust-thumbnail/json';
+    rkitty.Endpoints.Urls['/group-thumbnails'] = 'https://retro.kitty.to/group-thumbnails';
+    rkitty.Endpoints.Urls['/groups/getprimarygroupinfo.ashx'] = 'https://retro.kitty.to/groups/getprimarygroupinfo.ashx';
+    rkitty.Endpoints.Urls['/headshot-thumbnail/json'] = 'https://retro.kitty.to/headshot-thumbnail/json';
+    rkitty.Endpoints.Urls['/item-thumbnails'] = 'https://retro.kitty.to/item-thumbnails';
+    rkitty.Endpoints.Urls['/outfit-thumbnail/json'] = 'https://retro.kitty.to/outfit-thumbnail/json';
+    rkitty.Endpoints.Urls['/place-thumbnails'] = 'https://retro.kitty.to/place-thumbnails';
+    rkitty.Endpoints.Urls['/thumbnail/asset/'] = 'https://retro.kitty.to/thumbnail/asset/';
+    rkitty.Endpoints.Urls['/thumbnail/avatar-headshot'] = 'https://retro.kitty.to/thumbnail/avatar-headshot';
+    rkitty.Endpoints.Urls['/thumbnail/avatar-headshots'] = 'https://retro.kitty.to/thumbnail/avatar-headshots';
+    rkitty.Endpoints.Urls['/thumbnail/user-avatar'] = 'https://retro.kitty.to/thumbnail/user-avatar';
+    rkitty.Endpoints.Urls['/thumbnail/resolve-hash'] = 'https://retro.kitty.to/thumbnail/resolve-hash';
+    rkitty.Endpoints.Urls['/thumbnail/place'] = 'https://retro.kitty.to/thumbnail/place';
+    rkitty.Endpoints.Urls['/thumbnail/get-asset-media'] = 'https://retro.kitty.to/thumbnail/get-asset-media';
+    rkitty.Endpoints.Urls['/thumbnail/remove-asset-media'] = 'https://retro.kitty.to/thumbnail/remove-asset-media';
+    rkitty.Endpoints.Urls['/thumbnail/set-asset-media-sort-order'] = 'https://retro.kitty.to/thumbnail/set-asset-media-sort-order';
+    rkitty.Endpoints.Urls['/thumbnail/place-thumbnails'] = 'https://retro.kitty.to/thumbnail/place-thumbnails';
+    rkitty.Endpoints.Urls['/thumbnail/place-thumbnails-partial'] = 'https://retro.kitty.to/thumbnail/place-thumbnails-partial';
+    rkitty.Endpoints.Urls['/thumbnail_holder/g'] = 'https://retro.kitty.to/thumbnail_holder/g';
+    rkitty.Endpoints.Urls['/users/{id}/profile'] = 'https://retro.kitty.to/users/{id}/profile';
+    rkitty.Endpoints.Urls['/service-workers/push-notifications'] = 'https://retro.kitty.to/service-workers/push-notifications';
+    rkitty.Endpoints.Urls['/notification-stream/notification-stream-data'] = 'https://retro.kitty.to/notification-stream/notification-stream-data';
+    rkitty.Endpoints.Urls['/api/friends/acceptfriendrequest'] = 'https://retro.kitty.to/api/friends/acceptfriendrequest';
+    rkitty.Endpoints.Urls['/api/friends/declinefriendrequest'] = 'https://retro.kitty.to/api/friends/declinefriendrequest';
+    rkitty.Endpoints.addCrossDomainOptionsToAllRequests = true;
+</script>
+
+<script>
+    rkitty = rkitty || {};
+    rkitty.AbuseReportPVMeta = {
+        desktopEnabled: false,
+        phoneEnabled: false,
+        inAppEnabled: false,
+        inApp: false
+    };
+</script>
+</head>
+<body id="rbx-body" class="" data-performance-relative-value="0.005" data-internal-page-name="NewLogin" data-send-event-percentage="0.01">
+
+<div id="modal-confirmation" class="modal-confirmation" data-modal-type="confirmation">
+    <div id="modal-dialog" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true"><span class="icon-close"></span></span><span class="sr-only">Close</span>
+                </button>
+                <h5 class="modal-title"></h5>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-top-body">
+                    <div class="modal-message"></div>
+                    <div class="modal-image-container rkitty-item-image" data-image-size="medium" data-no-overlays data-no-click>
+                        <img class="modal-thumb" alt="generic image"/>
+                    </div>
+                    <div class="modal-checkbox checkbox">
+                        <input id="modal-checkbox-input" type="checkbox"/>
+                        <label for="modal-checkbox-input"></label>
+                    </div>
+                </div>
+                <div class="modal-btns">
+                    <a href id="confirm-btn"><span></span></a>
+                    <a href id="decline-btn"><span></span></a>
+                </div>
+                <div class="loading modal-processing">
+                    <img class="loading-default" src="https://images.rbxcdn.com/4bed93c91f909002b1f17f05c0ce13d1.gif" alt="Processing..."/>
+                </div>
+            </div>
+            <div class="modal-footer text-footer">
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        rkitty = rkitty || {};
+        rkitty.Resources = rkitty.Resources || {};
+
+        rkitty.Resources.Dialog = {
+            yes: "Yes",
+            No: "No",
+            Confirm: "Confirm",
+            Cancel: "Cancel",
+            Agree: "Agree"
+        };
+    </script>
+</div>
+
+<div class="nav-container no-gutter-ads">
+
+<div id="header" class="navbar-fixed-top rbx-header" data-isfriendshiprealtimeupdateenabled="true" data-isauthenticated="false" data-isnavigationuserdatafromclientsideenabled="true" role="navigation">
+    <div class="container-fluid">
+        <div class="rbx-navbar-header">
+            <div data-behavior="nav-notification" class="rbx-nav-collapse" onselectstart="return false;">
+            </div>
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://retro.kitty.to/">
+                    <span class="icon-logo"></span>
+                    <span class="icon-logo-r"></span>
+                </a>
+            </div>
+        </div>
+        <ul class="nav rbx-navbar hidden-xs hidden-sm col-md-4 col-lg-3">
+            <li>
+                <a class="nav-menu-title" href="https://retro.kitty.to/games">Games</a>
+            </li>
+            <li>
+                <a class="nav-menu-title" href="https://retro.kitty.to/catalog/">Catalog</a>
+            </li>
+            <li>
+                <a class="nav-menu-title" href="https://retro.kitty.to/develop">Develop</a>
+            </li>
+            <li>
+                <a class="buy-Borux nav-menu-title" href="https://retro.kitty.to/upgrades/Borux?ctx=nav">Borux</a>
+            </li>
+        </ul>
+        <div id="navbar-universal-search" class="navbar-left rbx-navbar-search col-xs-5 col-sm-6 col-md-3" data-behavior="univeral-search" role="search">
+            <div class="input-group">
+                <input id="navbar-search-input" class="form-control input-field" type="text" placeholder="Search" maxlength="120"/>
+                <div class="input-group-btn">
+                    <button id="navbar-search-btn" class="input-addon-btn" type="submit">
+                        <span class="icon-nav-search"></span>
+                    </button>
+                </div>
+            </div>
+            <ul data-toggle="dropdown-menu" class="dropdown-menu" role="menu">
+                <li class="rbx-navbar-search-option rbx-clickable-li selected" data-searchurl="https://retro.kitty.to/search/users?keyword=">
+                    <a class="rbx-navbar-search-anchor" href="https://retro.kitty.to/search/users?keyword=">
+                        <span class="rbx-navbar-search-text">Search <span class="rbx-navbar-search-string"></span> in People</span>
+                    </a>
+                </li>
+                <li class="rbx-navbar-search-option rbx-clickable-li" data-searchurl="https://retro.kitty.to/games/?Keyword=">
+                    <a class="rbx-navbar-search-anchor" href="https://retro.kitty.to/games/?Keyword=">
+                        <span class="rbx-navbar-search-text">Search <span class="rbx-navbar-search-string"></span> in Games</span>
+                    </a>
+                </li>
+                <li class="rbx-navbar-search-option rbx-clickable-li" data-searchurl="https://retro.kitty.to/catalog/browse.aspx?CatalogContext=1&Keyword=">
+                    <a class="rbx-navbar-search-anchor" href="https://retro.kitty.to/catalog/browse.aspx?CatalogContext=1&Keyword=">
+                        <span class="rbx-navbar-search-text">Search <span class="rbx-navbar-search-string"></span> in Catalog</span>
+                    </a>
+                </li>
+                <li class="rbx-navbar-search-option rbx-clickable-li" data-searchurl="https://retro.kitty.to/groups/search.aspx?val=">
+                    <a class="rbx-navbar-search-anchor" href="https://retro.kitty.to/groups/search.aspx?val=">
+                        <span class="rbx-navbar-search-text">Search <span class="rbx-navbar-search-string"></span> in Groups</span>
+                    </a>
+                </li>
+                <li class="rbx-navbar-search-option rbx-clickable-li" data-searchurl="https://retro.kitty.to/develop/library?CatalogContext=2&Category=6&Keyword=">
+                    <a class="rbx-navbar-search-anchor" href="https://retro.kitty.to/develop/library?CatalogContext=2&Category=6&Keyword=">
+                        <span class="rbx-navbar-search-text">Search <span class="rbx-navbar-search-string"></span> in Library</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="navbar-right rbx-navbar-right">
+            <ul class="nav navbar-right rbx-navbar-right-nav" data-display-opened="False">
+                <li>
+                    <a id="head-login" class="rbx-navbar-login nav-menu-title" data-behavior="login" data-viewport="#header">Log In</a>
+                </li>
+                <div id="iFrameLogin" class="iFrameLogin popover bottom in" role="menu">
+                    <div class="arrow"></div>
+                    <iframe id="iframe-login" name="iframe-nav-login" class="rbx-navbar-login-iframe" data-delaysrc="https://retro.kitty.to/Login/iFrameLogin.aspx?parentUrl=https%3a%2f%2fwww.retro.kitty.to%2fNewLogin" scrolling="no" frameborder="0" width="320"></iframe>
+                </div>
+                <li>
+                    <a class="rbx-navbar-signup nav-menu-title" href="https://retro.kitty.to/account/signupredir">Sign Up</a>
+                </li>
+                <li class="rbx-navbar-right-search" data-toggle="toggle-search">
+                    <a class="rbx-menu-icon">
+                        <span class="icon-nav-search-white"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <ul class="nav rbx-navbar hidden-md hidden-lg col-xs-12">
+            <li>
+                <a class="nav-menu-title" href="https://retro.kitty.to/games">Games</a>
+            </li>
+            <li>
+                <a class="nav-menu-title" href="https://retro.kitty.to/catalog/">Catalog</a>
+            </li>
+            <li>
+                <a class="nav-menu-title" href="https://retro.kitty.to/develop">Develop</a>
+            </li>
+            <li>
+                <a class="buy-Borux nav-menu-title" href="https://retro.kitty.to/upgrades/Borux?ctx=nav">Borux</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var rkitty = rkitty || {};
+    (function () {
+        if (rkitty && rkitty.Performance) {
+            rkitty.Performance.setPerformanceMark("navigation_end");
+        }
+    })();
+</script>
+
+    <div id="navContent" class="nav-content logged-out">
+        <div class="nav-content-inner">
+            <div id="MasterContainer">
+                <script type="text/javascript">
+                    if (top.location != self.location) {
+                        top.location = self.location.href;
+                    }
+                </script>
+
+<script type="text/javascript">
+    $(function(){
+        function trackReturns() {
+            function dayDiff(d1, d2) {
+                return Math.floor((d1-d2)/86400000);
+            }
+            if (!localStorage) {
+                return false;
+            }
+
+            var cookieName = 'RBXReturn';
+            var cookieOptions = {expires:9001};
+            var cookieStr = localStorage.getItem(cookieName) || "";
+            var cookie = {};
+
+            try {
+                cookie = JSON.parse(cookieStr);
+            } catch (ex) {
+                // busted cookie string from old previous version of the code
+            }
+
+            try {
+                if (typeof cookie.ts === "undefined" || isNaN(new Date(cookie.ts))) {
+                    localStorage.setItem(cookieName, JSON.stringify({ ts: new Date().toDateString() }));
+                    return false;
+                }
+            } catch (ex) {
+                return false;
+            }
+
+            var daysSinceFirstVisit = dayDiff(new Date(), new Date(cookie.ts));
+            if (daysSinceFirstVisit == 1 && typeof cookie.odr === "undefined") {
+                rkittyEventManager.triggerEvent('rbx_evt_odr', {});
+                cookie.odr = 1;
+            }
+            if (daysSinceFirstVisit >= 1 && daysSinceFirstVisit <= 7 && typeof cookie.sdr === "undefined") {
+                rkittyEventManager.triggerEvent('rbx_evt_sdr', {});
+                cookie.sdr = 1;
+            }
+            try {
+                localStorage.setItem(cookieName, JSON.stringify(cookie));
+            } catch (ex) {
+                return false;
+            }
+        }
+
+        GoogleListener.init();
+
+        rkittyEventManager.initialize(true);
+        rkittyEventManager.triggerEvent('rbx_evt_pageview');
+        trackReturns();
+
+        rkittyEventManager._idleInterval = 450000;
+        rkittyEventManager.registerCookieStoreEvent('rbx_evt_initial_install_start');
+        rkittyEventManager.registerCookieStoreEvent('rbx_evt_ftp');
+        rkittyEventManager.registerCookieStoreEvent('rbx_evt_initial_install_success');
+        rkittyEventManager.registerCookieStoreEvent('rbx_evt_fmp');
+        rkittyEventManager.startMonitor();
+    });
+</script>
+
+                <div>
+                    <noscript><div class="alert-info">Please enable Javascript to use all the features on this site.</div></noscript>
+                    <div id="BodyWrapper" class="">
+                        <div id="RepositionBody">
+                            <div id="Body" class="body-width">
+                                <div id="TosAgreementInfo" data-terms-check-needed="False">
+                                </div>
+
+<div id="login-page-body">
+    <h1>Login to rkitty</h1>
+    
+<div>
+
+<div id="TwoStepVerificationApiPaths" data-request-code-unauthenticated="https://api.retro.kitty.to/twostepverification/request-unauthenticated" data-request-code="https://api.retro.kitty.to/twostepverification/request" data-verify-code-unauthenticated="https://api.retro.kitty.to/twostepverification/verify-unauthenticated" data-verify-code="https://api.retro.kitty.to/twostepverification/verify">
+</div>
+
+<div class="GenericModal modalPopup unifiedModal smallModal" style="display:none;">
+    <div class="Title"></div>
+    <div class="GenericModalBody">
+        <div>
+            <div class="ImageContainer">
+                <img class="GenericModalImage" alt="generic image"/>
+            </div>
+            <div class="Message"></div>
+        </div>
+        <div class="clear"></div>
+        <div id="GenericModalButtonContainer" class="GenericModalButtonContainer">
+            <a class="ImageButton btn-neutral btn-large rkitty-ok">OK</a>
+        </div>
+    </div>
+</div>
+
+        <form action="/newlogin" method="POST" id="loginForm">
+            <div id="loginarea" class="divider-bottom" data-is-captcha-on="False">
+                <div id="leftArea">
+                    <div id="loginPanel">
+                        <table id="logintable" class="login-table">
+                            <tr id="username">
+                                <td class="label"><label class="form-label" for="Username">Username:</label></td>
+                                <td class="input-box"><input class="text-box text-box-medium" data-val="true" data-val-required="You must enter a username." id="Username" name="Username" type="text" value=""/></td>
+                            </tr>
+                            <tr id="password">
+                                <td class="label"><label class="form-label" for="Password">Password:</label></td>
+                                <td class="input-box"><input class="text-box text-box-medium" data-val="true" data-val-required="You must enter a password." id="Password" name="Password" type="password"/></td>
+                            </tr>
+                        </table>
+                        <div id="captchaPanel">
+                        </div>
+                        <div class="sign-in-section">
+                            <div id="forgotPasswordPanel">
+                                <a class="text-link" href="https://retro.kitty.to/login/forgotPasswordOrUsername/" target="_blank">Forgot your password?</a>
+                            </div>
+                            <div id="signInButtonPanel" data-use-apiproxy-signin="False" data-sign-on-api-path="https://api.retro.kitty.to/login/v1">
+                                <a rkitty-js-onclick class="btn-medium btn-neutral">Sign In</a>
+                                <a rkitty-js-oncancel class="btn-medium btn-negative">Cancel</a>
+                            </div>
+                            <div class="clearFloats">
+                            </div>
+                        </div>
+                        <span id="fb-root">
+                            <div id="SplashPageConnect" class="fbSplashPageConnect social-login" data-rbx-provider="facebook">
+                                <a class="facebook-login old-facebook-button">
+                                    <span class="middle">Sign In with Facebook</span>
+                                </a>
+                            </div>
+
+<div id="SocialIdentitiesInformation" data-rbx-login-redirect-url="/social/postlogin">
+</div>
+                        </span>
+                    </div>
+                </div>
+                <div id="rightArea" class="divider-left">
+                    <div id="signUpPanel" class="FrontPageLoginBox">
+                        <p class="text">Not a member?</p>
+                        <h2 class="sign-up-title">Sign Up to Build &amp; Make Friends</h2>
+                        <a rkitty-js-onsignup class="btn-medium btn-primary">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+            <input id="ReturnUrl" name="ReturnUrl" type="hidden" value=""/>
+        </form>
+
+</div>
+
+<script src="https://google.com/recaptcha/api.js" async defer></script>
+<script type="text/javascript">
+    if (typeof rkitty === "undefined") {
+        rkitty = {};
+    }
+    if (typeof rkitty.Login === "undefined") {
+        rkitty.Login = {};
+    }
+
+    rkitty.Login.Resources = {
+        january: "January"
+        , february: "February"
+        , march: "March"
+        , april: "April"
+        , may: "May"
+        , june: "June"
+        , july: "July"
+        , august: "August"
+        , september: "September"
+        , october: "October"
+        , november: "November"
+        , december: "December"
+    };
+</script>
+
+    <div id="guestarea">
+        <h2>You don't need an account to play rkitty</h2>
+        <br/>
+        <p class="text">You can start playing right now, in guest mode! <a href="https://retro.kitty.to/games" class="btn-small btn-neutral" id="guestButton">Play as Guest</a></p>
+    </div>
+
+<div id="SocialIdentitiesInformation" data-rbx-login-redirect-url="/social/postlogin">
+</div>
+
+</div>
+
+                                <div style="clear: both"></div>
+                            </div>
+                        </div>
+                    </div>
+
+<footer class="container-footer">
+    <div class="footer">
+        <ul class="row footer-links">
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="http://corp.retro.kitty.to/" class="text-footer-nav rkitty-interstitial" target="_blank">
+                    About Us
+                </a>
+            </li>
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="https://corp.retro.kitty.to/careers/" class="text-footer-nav rkitty-interstitial" target="_blank">
+                    Jobs
+                </a>
+            </li>
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="http://blog.retro.kitty.to/" class="text-footer-nav" target="_blank">
+                    Blog
+                </a>
+            </li>
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="http://corp.retro.kitty.to/parents" class="text-footer-nav rkitty-interstitial" target="_blank">
+                    Parents
+                </a>
+            </li>
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="http://en.help.retro.kitty.to/" class="text-footer-nav rkitty-interstitial" target="_blank">
+                    Help
+                </a>
+            </li>
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="https://retro.kitty.to/info/terms" class="text-footer-nav" target="_blank">
+                    Terms
+                </a>
+            </li>
+            <li class="col-4 col-xs-1 footer-link">
+                <a href="https://retro.kitty.to/info/privacy" class="text-footer-nav privacy" target="_blank">
+                    Privacy
+                </a>
+            </li>
+        </ul>
+        <p class="text-footer footer-note">
+            &copy;2017 rkitty Corporation. rkitty, the rkitty logo, Borux, Bloxy, and Powering Imagination are among our registered and unregistered trademarks in the U.S. and other countries.
+        </p>
+    </div>
+</footer>
+
+                </div>
+            </div> 
+        </div> 
+    </div>

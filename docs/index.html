@@ -29,10 +29,13 @@
           .responsive-logo {
             max-width: 61%
           }
+          .responsive-margin {
+            padding: 1%;
+          }
         }
         </style>
         <a href="#"><img src="img/rkitty-2010+.png" alt="rkitty" class="responsive-logo"></a>
-        <ul dir="rtl" style="float: right;">
+        <ul dir="rtl" style="float: right;" class="responsive-margin">
         <nav>
           <ul>
             <li>
@@ -59,16 +62,15 @@
       <section id="preview">
         <h2>Preview</h2>
         <p>
-          Sed ultricies dolor non ante vulputate hendrerit. Vivamus sit amet suscipit sapien. Nulla
-          iaculis eros a elit pharetra egestas.
+          Want to get straight into the action? Sign up now:
         </p>
         <form>
           <div class="grid">
             <input
               type="text"
-              name="firstname"
-              placeholder="First name"
-              aria-label="First name"
+              name="user"
+              placeholder="Username"
+              aria-label="Username"
               required
             >
             <input
@@ -79,15 +81,22 @@
               autocomplete="email"
               required
             >
-            <button type="submit">Subscribe</button>
+             <button type="submit" formmethod="get" formaction="./signup-fake.html">
+              Sign up
+            </button>
+          </form>
           </div>
           <fieldset>
             <label for="terms">
               <input type="checkbox" role="switch" id="terms" name="terms">
               I agree to the
-              <a href="#" onclick="event.preventDefault()">Privacy Policy</a>
+              <a href="#" onclick="event.preventDefault()">Rules</a>
             </label>
           </fieldset>
+            <hgroup>
+              <p></p>
+              <p>Already have an account? Click <a href="#">here</a> to login</p>
+            </hgroup>
         </form>
       </section>
       <!-- ./ Preview -->
@@ -470,11 +479,7 @@
     <!-- Footer -->
     <footer class="container">
       <small
-        >Built with <a href="https://picocss.com">Pico</a> •
-        <a href="https://github.com/picocss/examples/blob/master/v2-html/index.html"
-          >Source code</a
-        ></small
-      >
+        >Built with <a href="https://picocss.com">Pico</a> •</small
     </footer>
     <!-- ./ Footer -->
 
